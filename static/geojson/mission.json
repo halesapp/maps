@@ -1,0 +1,117 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {"name": "Chicago O'Hare Airport"},
+            "geometry": {
+                "coordinates": [-87.904724, 41.978611],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Frankfurt Airport"},
+            "geometry": {
+                "coordinates": [8.562096, 50.037503],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Appartamento a Firenze"},
+            "geometry": {
+                "coordinates": [11.269319, 43.780531],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Duomo di Firenze - Florence Cathedral"},
+            "geometry": {
+                "coordinates": [11.256463, 43.773197],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Chiesa - Church"},
+            "geometry": {
+                "coordinates": [11.223759, 43.799389],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Other Missionary's Apartment"},
+            "geometry": {
+                "coordinates": [11.248708, 43.781425],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Cento Poveri - Restaurant"},
+            "geometry": {
+                "coordinates": [11.247382, 43.773177],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Piazzale Michelangelo"},
+            "geometry": {
+                "coordinates": [11.265078, 43.762978],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Outdoor Market"},
+            "geometry": {
+                "coordinates": [11.253623, 43.775495],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Duomo di Genova - Genoa Cathedral"},
+            "geometry": {
+                "coordinates": [8.931212, 44.407730],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "San Marino"},
+            "geometry": {
+                "coordinates": [12.456524, 43.936523],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Duomo di Ancona - Ancona Cathedral"},
+            "geometry": {
+                "coordinates": [13.510263, 43.625229],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Duomo di Milano"},
+            "geometry": {
+                "coordinates": [9.191390, 45.464170],
+                "type": "Point"
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {"name": "Amsterdam International Airport"},
+            "geometry": {
+                "coordinates": [4.764015, 52.310204],
+                "type": "Point"
+            }
+        }
+    ]
+}

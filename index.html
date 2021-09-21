@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Required meta tags -->
+  <title>Map App - rileyhales.com</title>
+  <link rel="shortcut icon" href="favicon.ico">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A tool to help you view and test web maps">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="/static/css/main.css">
+  <link rel="stylesheet" href="/static/css/maps.css">
+
+  <script type="text/javascript" src="static/js/map.js" defer></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+        integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+        crossorigin=""/>
+  <link rel="stylesheet" href="https://cdn.rawgit.com/socib/Leaflet.TimeDimension/master/dist/leaflet.timedimension.control.min.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.css"/>
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+          integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+          crossorigin=""></script>
+  <script src="https://unpkg.com/esri-leaflet@2.5.0/dist/esri-leaflet.js"
+          integrity="sha512-ucw7Grpc+iEQZa711gcjgMBnmd9qju1CICsRaryvX7HJklK0pGl/prxKvtHwpgm5ZHdvAil7YPxI1oWPOWK3UQ=="
+          crossorigin=""></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
+  <script>
+      function displayTab(showtab, activatebtn) {
+          const tabs = ["tab-ctrls", "tab-wms", "tab-json", "tab-wfs", "btn-ctrls", "btn-wms", "btn-json", "btn-wfs"]
+          tabs.forEach(tab => {
+              let element = document.getElementById(tab)
+              element.classList.remove("active")
+              element.classList.remove("show")
+          })
+          document.getElementById(activatebtn).classList.add("active")
+          document.getElementById(showtab).classList.add("active")
+          document.getElementById(showtab).classList.add("show")
+      }
+  </script>
+
+</head>
+
+<body>
+
+<div id="content">
+  <div id="map"></div>
+
+  <div id="controls">
+
+    <ul class="nav nav-tabs nav-justified" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="btn-ctrls" data-toggle="tab" role="tab" onclick="displayTab('tab-ctrls', 'btn-ctrls')">Map Controls</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="btn-wms" data-toggle="tab" role="tab" onclick="displayTab('tab-wms', 'btn-wms')">WMS Layer</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="btn-json" data-toggle="tab" role="tab" onclick="displayTab('tab-json', 'btn-json')">Draw JSON</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="btn-wfs" data-toggle="tab" role="tab" onclick="displayTab('tab-wfs', 'btn-wfs')">Online JSON</a>
+      </li>
+    </ul>
+    <hr style="height: .25em">
+
+    <div class="tab-content">
+
+      <div class="tab-pane fade show active" id="tab-ctrls" role="tabpanel">
+        <div class="input-group">`
+          <div class="input-group-prepend">
+            <span class="input-group-text">Find Location</span>
+          </div>
+          <input id="input-find-lat" type="number" class="form-control" placeholder="latitude">
+          <input id="input-find-lon" type="number" class="form-control" placeholder="longitude">
+          <button id="btn-find-location" class="btn btn-success">Find</button>
+        </div>
+
+        <hr>
+
+        <label for="esri-country-input">Find a country</label>
+        <div class="input-group">
+          <input id="esri-country-input" class="w-100" list="list-esri-countries">
+          <button id="btn-show-esri-country" class="btn btn-success btn-submit w-100">Display</button>
+          <datalist id="list-esri-countries"></datalist>
+        </div>
+
+      </div>
+
+      <div class="tab-pane fade" id="tab-wms" role="tabpanel">
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">URL</span>
+          </div>
+          <input id="input-wms-url" type="text" class="form-control" placeholder="WMS endpoint">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Layer</span>
+          </div>
+          <input id="input-wms-layer" type="text" class="form-control" placeholder="layer name">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Range</span>
+          </div>
+          <input id="input-wms-min" type="number" class="form-control" placeholder="minimum">
+          <input id="input-wms-max" type="number" class="form-control" placeholder="maximum">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Color</span>
+          </div>
+          <input id="input-wms-colorscheme" type="text" class="form-control" placeholder="e.g. boxfill/rainbow">
+        </div>
+
+        <div class="input-group">
+          <div class="input-group-prepend">
+            <span class="input-group-text">Opacity</span>
+          </div>
+          <input id="input-wms-opacity" type="range" class="form-control" min="0" max="1" value="1" step=".01">
+        </div>
+
+        <button id="btn-get-wms" class="btn btn-success btn-submit w-100">Add WMS Layer</button>
+        <button id="btn-get-wms-time" class="btn btn-success btn-submit w-100">Add WMS Layer w/ Time Dimension</button>
+        <button id="btn-get-legend" class="btn btn-success btn-submit w-100">Add Legend (THREDDS)</button>
+
+        <hr>
+
+        <a href="https://thredds.ucar.edu/thredds/catalog.html" target="_blank">UCAR THREDDS Server</a>
+        <li><a href="#" onclick="MapApp.autofillWmsInputs('gfs')">Autofill - GFS 1/4 Degree Best</a></li>
+        <li><a href="#" onclick="MapApp.autofillWmsInputs('gfs-temp')">Autofill - GFS 1/4 Degree Best - Air Temperature</a></li>
+      </div>
+
+      <div class="tab-pane fade" id="tab-json" role="tabpanel">
+        <textarea id="textarea-json" class="form-control" placeholder="Paste and edit GeoJSON here" rows=30></textarea>
+        <button id="json-submit" class="btn btn-info w-100">Add to Map</button>
+        <button id="json-save" class="btn btn-secondary w-100">Download JSON</button>
+      </div>
+
+      <div class="tab-pane fade" id="tab-wfs" role="tabpanel">
+        <select id="select-geojson" class="form-select-lg w-100">
+          <option value="" selected>Pick a Map Layer</option>
+        </select>
+        <hr>
+        <div class="input-group-text flex-fill">
+          <input id="input-json-url" type="text" placeholder="URL to GeoJSON">
+          <button id="btn-get-json" class="btn btn-success">Get GeoJSON</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+
+</html>

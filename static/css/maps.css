@@ -1,0 +1,40 @@
+#map {
+    flex: 1 1 65%;
+    height: 100%;
+}
+#controls {
+    flex: 1 1 35%;
+    height: 100%;
+    padding: 1em;
+    background-color: whitesmoke;
+    border-left: black 2px solid;
+}
+#content {
+    display: flex;
+    overflow-y: scroll;
+}
+#tab-content {
+    height: inherit;
+}
+textarea {
+    display: block;
+    font-family: monospace;
+    white-space: pre;
+    margin: 1em 0;
+}
+.mouse-position {
+    background-color: whitesmoke;
+    box-shadow: 0 0 1px 1px black;
+    display: flex;
+    padding: 0 1em;
+}
+.nav-link {
+    cursor: pointer;
+    user-select: none;
+}
+.input-group {
+    margin: .5em 0;
+}
+.btn-submit {
+    margin: .5em 0;
+}
