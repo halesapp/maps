@@ -29,10 +29,11 @@ const MapApp = (function () {
         cache: 20,
     }
     const MAP_INIT_CONFIGS = {
-        zoom: 4,
+        zoom: 2,
         minZoom: 2,
         zoomSnap: .5,
         boxZoom: true,
+        crs: L.CRS.EPSG4326,
         maxBounds: L.latLngBounds(L.latLng(-100.0, -270.0), L.latLng(100.0, 270.0)),
         center: [0, 0],
         timeDimension: true,
@@ -49,6 +50,7 @@ const MapApp = (function () {
             speedStep: 1,
         },
     }
+
     const URL_UCAR_GFS = "https://thredds.ucar.edu/thredds/wms/grib/NCEP/GFS/Global_0p25deg/Best"
     const AUTOFILL_GFS = {
         url: URL_UCAR_GFS,
@@ -57,6 +59,11 @@ const MapApp = (function () {
         max: 350,
         color: "boxfill/alg2",
     }
+    const AUTOFILL_GESDISC = {
+        url: "https://giovanni.gsfc.nasa.gov/giovanni/daac-bin/wms_ag4",
+        layer: "Time-Averaged.GLDAS_NOAH025_3H_2_1_Tair_f_inst"
+    }
+
     // Get JSON from URL
     const SELECT_MYGEOJSON = document.getElementById("select-geojson")
     const INPUT_JSON_URL = document.getElementById("input-json-url")
@@ -75,12 +82,12 @@ const MapApp = (function () {
     const BTN_GET_WMS = document.getElementById("btn-get-wms")
     const BTN_GET_WMS_TIME = document.getElementById("btn-get-wms-time")
     const BTN_GET_LEGEND = document.getElementById("btn-get-legend")
-    const INPUT_WMS_URL = document.getElementById("input-wms-url")
-    const INPUT_WMS_LAYER = document.getElementById("input-wms-layer")
-    const INPUT_WMS_MIN = document.getElementById("input-wms-min")
-    const INPUT_WMS_MAX = document.getElementById("input-wms-max")
+    const INPUT_WMS_URL = document.getElementById("endpoint")
+    const INPUT_WMS_LAYER = document.getElementById("layer")
+    const INPUT_WMS_COLOR = document.getElementById("styles")
+    const INPUT_WMS_MIN = document.getElementById("csmin")
+    const INPUT_WMS_MAX = document.getElementById("csmax")
     const INPUT_WMS_OPAC = document.getElementById("input-wms-opacity")
-    const INPUT_WMS_COLOR = document.getElementById("input-wms-colorscheme")
     // Draw/Edit GeoJSON
     const INPUT_EDIT_JSON = document.getElementById("textarea-json")
     const BTN_GET_JSON = document.getElementById("btn-get-json")
@@ -149,12 +156,6 @@ const MapApp = (function () {
         })
         BTN_GET_JSON.addEventListener("click", () => {
             addGeoJSON(INPUT_JSON_URL.value, "Provided JSON URL")
-        })
-        BTN_GET_WMS.addEventListener("click", () => {
-            addWMS(INPUT_WMS_URL.value, INPUT_WMS_LAYER.value, null, false)
-        })
-        BTN_GET_WMS_TIME.addEventListener("click", () => {
-            addWMS(INPUT_WMS_URL.value, INPUT_WMS_LAYER.value, null, true)
         })
         BTN_EDIT_JSON.addEventListener("click", () => {
             addInputJson(JSON.parse(INPUT_EDIT_JSON.value))
@@ -280,7 +281,6 @@ const MapApp = (function () {
             transparent: true,
             crossOrigin: false,
             useCache: true,
-            opacity: `${INPUT_WMS_OPAC.value}`,
         }
         if (INPUT_WMS_MIN.value !== "" && INPUT_WMS_MAX.value !== "") {
             wmsOptions["colorscalerange"] = `${INPUT_WMS_MIN.value},${INPUT_WMS_MAX.value}`
@@ -291,6 +291,28 @@ const MapApp = (function () {
         if (time) LAYER_WMS = L.timeDimension.layer.wms(L.tileLayer.wms(url, wmsOptions), TIME_LAYER_CONFIGS).addTo(map)
         else LAYER_WMS = L.tileLayer.wms(url, wmsOptions).addTo(map)
         layerControl.addOverlay(LAYER_WMS, (title ? title : layer))
+    }
+
+    const addWMSLayer = (event) => {
+        event.preventDefault()
+        removeWMS()
+        const wmsOptions = {
+            layers: event.target.layer.value,
+            version: event.target.version.value,
+            format: "image/png",
+            transparent: true,
+            crossOrigin: false,
+            width: event.target.width.value,
+            height: event.target.height.value,
+            srs: event.target.srs.value
+        }
+        if (event.target.styles.value) wmsOptions['styles'] = event.target.styles.value
+        if (event.target.csmin.value && event.target.csmax.value) wmsOptions['colorscalerange'] = `${event.target.csmin.value},${event.target.csmax.value}`
+
+        LAYER_WMS = L.tileLayer.wms(event.target.endpoint.value, wmsOptions)
+        if (event.target.time.value) LAYER_WMS = L.timeDimension.layer.wms(LAYER_WMS, TIME_LAYER_CONFIGS)
+        LAYER_WMS.addTo(map)
+        layerControl.addOverlay(LAYER_WMS, (event.target.layer.value))
     }
 
     const addLegend = function () {
@@ -315,12 +337,17 @@ const MapApp = (function () {
             INPUT_WMS_MIN.value = AUTOFILL_GFS.min
             INPUT_WMS_MAX.value = AUTOFILL_GFS.max
             INPUT_WMS_COLOR.value = AUTOFILL_GFS.color
+            document.getElementById("time").checked = true
+        } else if (config === 'gesdisc') {
+            INPUT_WMS_URL.value = AUTOFILL_GESDISC.url
+            INPUT_WMS_LAYER.value = AUTOFILL_GESDISC.layer
         }
     }
 
     return {
         init,
         autofillWmsInputs,
+        addWMSLayer,
     }
 
 }())

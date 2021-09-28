@@ -27,7 +27,7 @@
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/iso8601-js-period@0.2.1/iso8601.min.js"></script>
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/leaflet-timedimension@1.1.0/dist/leaflet.timedimension.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/0.4.2/leaflet.draw.js"></script>
-  <script>
+  <script defer>
       function displayTab(showtab, activatebtn) {
           const tabs = ["tab-ctrls", "tab-wms", "tab-json", "tab-wfs", "btn-ctrls", "btn-wms", "btn-json", "btn-wfs"]
           tabs.forEach(tab => {
@@ -69,7 +69,7 @@
     <div class="tab-content">
 
       <div class="tab-pane fade show active" id="tab-ctrls" role="tabpanel">
-        <div class="input-group">`
+        <div class="input-group">
           <div class="input-group-prepend">
             <span class="input-group-text">Find Location</span>
           </div>
@@ -90,34 +90,62 @@
       </div>
 
       <div class="tab-pane fade" id="tab-wms" role="tabpanel">
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">URL</span>
+        <form onsubmit="MapApp.addWMSLayer(event)" action="_self">
+          <div>
+            <label for="endpoint">WMS Endpoint</label>
+            <input id="endpoint" name="endpoint" type="text" placeholder="https://example.com/wms" required>
           </div>
-          <input id="input-wms-url" type="text" class="form-control" placeholder="WMS endpoint">
-        </div>
 
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Layer</span>
+          <div>
+            <label for="layer">Layer Name</label>
+            <input id="layer" name="layer" type="text" placeholder="layer" required>
           </div>
-          <input id="input-wms-layer" type="text" class="form-control" placeholder="layer name">
-        </div>
 
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Range</span>
+          <div>
+            <label for="version">WMS Version</label>
+            <select name="version" id="version" required>
+              <optgroup label="Web Map Service version">
+                <option value="1.1.1" selected>1.1.1</option>
+                <option value="1.3">1.3</option>
+                <option value="1.3.0">1.3.0</option>
+              </optgroup>
+            </select>
           </div>
-          <input id="input-wms-min" type="number" class="form-control" placeholder="minimum">
-          <input id="input-wms-max" type="number" class="form-control" placeholder="maximum">
-        </div>
 
-        <div class="input-group">
-          <div class="input-group-prepend">
-            <span class="input-group-text">Color</span>
+          <div>
+            <label for="width">Map Tile Width</label>
+            <input id="width" name="width" type="text" value="512" required>
           </div>
-          <input id="input-wms-colorscheme" type="text" class="form-control" placeholder="e.g. boxfill/rainbow">
-        </div>
+          <div>
+            <label for="height">Map Tile Height</label>
+            <input id="height" name="height" type="text" value="256" required>
+          </div>
+          <div>
+            <label for="srs">SRS</label>
+            <input id="srs" name="srs" type="text" value="EPSG:4326" required>
+          </div>
+
+          <div>
+            <label for="styles">Color Scheme:</label>
+            <input id="styles" name="styles" type="text" placeholder="boxfill/rainbow">
+          </div>
+
+          <div>
+            <label>Color Range:</label>
+            <input id="csmin" name="csmin" type="number" placeholder="0">
+            <input id="csmax" name="csmax" type="number" placeholder="100">
+          </div>
+
+          <div>
+            <label for="time">Time Layer:</label>
+            <input id="time" name="time" type="checkbox">
+          </div>
+
+          <button id="btn-get-wms" class="btn btn-success btn-submit w-100">Add WMS Layer</button>
+        </form>
+
+        <hr>
+        <h4>other options</h4>
 
         <div class="input-group">
           <div class="input-group-prepend">
@@ -125,16 +153,13 @@
           </div>
           <input id="input-wms-opacity" type="range" class="form-control" min="0" max="1" value="1" step=".01">
         </div>
-
-        <button id="btn-get-wms" class="btn btn-success btn-submit w-100">Add WMS Layer</button>
-        <button id="btn-get-wms-time" class="btn btn-success btn-submit w-100">Add WMS Layer w/ Time Dimension</button>
         <button id="btn-get-legend" class="btn btn-success btn-submit w-100">Add Legend (THREDDS)</button>
 
-        <hr>
 
         <a href="https://thredds.ucar.edu/thredds/catalog.html" target="_blank">UCAR THREDDS Server</a>
         <li><a href="#" onclick="MapApp.autofillWmsInputs('gfs')">Autofill - GFS 1/4 Degree Best</a></li>
         <li><a href="#" onclick="MapApp.autofillWmsInputs('gfs-temp')">Autofill - GFS 1/4 Degree Best - Air Temperature</a></li>
+        <li><a href="#" onclick="MapApp.autofillWmsInputs('gesdisc')">GES DISC GLDAS Air Temperature</a></li>
       </div>
 
       <div class="tab-pane fade" id="tab-json" role="tabpanel">
