@@ -13,7 +13,7 @@ const MapApp = (function () {
     "ESRI World Imagery": L.esri.basemapLayer('Imagery'),
     "ESRI Labeled World Imagery": L.layerGroup([L.esri.basemapLayer('Imagery'), L.esri.basemapLayer('ImageryLabels')]),
     "ESRI Terrain": L.esri.basemapLayer('Terrain'),
-    "ESRI Labeled Terrain": L.layerGroup([L.esri.basemapLayer('Terrain'), L.esri.basemapLayer('ImageryLabels')]),
+    "ESRI Labeled Terrain": L.layerGroup([L.esri.basemapLayer('Terrain'), L.esri.basemapLayer('ImageryLabels')])
   }
   // URLs and Paths
   const DIV_MAP = "map"
@@ -90,6 +90,8 @@ const MapApp = (function () {
   const BTN_GET_JSON = document.getElementById("btn-get-json")
   const BTN_EDIT_JSON = document.getElementById("json-submit")
   const BTN_SAVE_JSON = document.getElementById("json-save")
+  // Map Controls Button
+  const BTN_MAP_CTRLS = document.getElementById("map-ctrl-wrapper")
 
   let LAYER_GEOJSON = L.geoJSON()
   let LAYER_WMS = null
@@ -101,6 +103,12 @@ const MapApp = (function () {
     }
   })
   let map
+  const showModalBtn = L.control({position: 'bottomright'})
+  showModalBtn.onAdd = () => {
+    let div = L.DomUtil.create('div')
+    div.innerHTML = `<button type="button" class="btn btn-primary" onclick="MapApp.toggleControlBar()">Show Controls</button>`
+    return div
+  }
   const legend = L.control({position: 'bottomright'})
   legend.onAdd = () => {
     let div = L.DomUtil.create('div')
@@ -118,7 +126,9 @@ const MapApp = (function () {
     map = L.map(DIV_MAP, MAP_INIT_CONFIGS)
     basemaps[Object.keys(basemaps)[0]].addTo(map)
 
-    layerControl = L.control.layers(basemaps, {"Drawn Items": LAYER_DRAW.addTo(map)}, {collapsed: false})
+    showModalBtn.addTo(map)
+
+    layerControl = L.control.layers(basemaps, {"Drawn Items": LAYER_DRAW.addTo(map)}, {collapsed: true})
     layerControl.addTo(map)
 
     map.addControl(drawControl)
@@ -140,12 +150,8 @@ const MapApp = (function () {
       LAYER_DRAW.addLayer(event.layer)
       updateJsonDisplay()
     })
-    map.on("draw:edited", function () {
-      updateJsonDisplay()
-    })
-    map.on("draw:deleted", function () {
-      updateJsonDisplay()
-    })
+    map.on("draw:edited", () => {updateJsonDisplay()})
+    map.on("draw:deleted", () => {updateJsonDisplay()})
   }
   const initClickEvents = function () {
     SELECT_MYGEOJSON.addEventListener("change", () => {
@@ -290,6 +296,7 @@ const MapApp = (function () {
 
   const addLegend = () => {
     legend.addTo(map)
+    legend.remove()
   }
 
   const updateJsonDisplay = () => {
@@ -317,10 +324,16 @@ const MapApp = (function () {
     }
   }
 
+  const toggleControlBar = () => {
+    BTN_MAP_CTRLS.classList.contains("show") ? BTN_MAP_CTRLS.classList.remove("show") : BTN_MAP_CTRLS.classList.add("show")
+  }
+
   return {
     init,
     autofillWmsInputs,
     addWMSLayer,
+    toggleControlBar,
+    map: map
   }
 
 }())
