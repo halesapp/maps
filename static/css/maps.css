@@ -1,20 +1,9 @@
-#map {
-    flex: 1 1 65%;
-    height: 100%;
-}
 #controls {
     flex: 1 1 35%;
     height: 100%;
     padding: 1em;
     background-color: whitesmoke;
     border-left: black 2px solid;
-}
-#content {
-    display: flex;
-    overflow-y: scroll;
-}
-#tab-content {
-    height: inherit;
 }
 textarea {
     display: block;
@@ -37,4 +26,18 @@ textarea {
 }
 .btn-submit {
     margin: .5em 0;
+}
+
+.wms-form {
+    overflow: auto;
+}
+.wms-form > div {
+    display: flex;
+    flex-direction: column;
+}
+.wms-form > h4 {
+    text-align: center;
+}
+.wms-form-row {
+    flex-direction: row;
 }
